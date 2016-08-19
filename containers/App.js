@@ -22,22 +22,22 @@ class App extends Component {
 
 
   render() {
-    const { botList, currentHoverBot, currentBot, currentDialogues, currentDialogue, currentMessage} = this.props.page;
-    const { setYear, getBotList, mouseOverBotCard, clickBotCard, chooseDialog, chooseMessage, onChangeText, done} = this.props.pageActions;
-        console.log(currentMessage)
+    const { botList, currentHoverBot, currentBot, currentDialogues, currentChatId, currentMessage} = this.props.page;
+    console.log(currentMessage)
+    const { setYear, getBotList, mouseOverBotCard, clickBotCard, chooseChat, chooseMessage, onChangeText, done} = this.props.pageActions;
     return(
 	    <div className="ui grid container">
         <div className="two wide column">
           <BotList botList={botList} currentBot={currentBot} currentHoverBot={currentHoverBot} mouseOverBotCard={mouseOverBotCard} clickBotCard={clickBotCard}/>
         </div>
         <div className="four wide column">
-          <DialogueList currentBot={currentBot} dialogues={currentDialogues} currentDialogue={currentDialogue} chooseDialog={chooseDialog}/>
+          <DialogueList currentDialogues={currentDialogues} currentChatId={currentChatId} chooseChat={chooseChat}/>
         </div>
         <div className="six wide column">
-          <Chat currentDialogue={currentDialogue} chooseMessage={chooseMessage} currentMessage={currentMessage}/>
+          <Chat currentChatId={currentChatId} currentDialogues={currentDialogues} chooseMessage={chooseMessage} currentMessage={currentMessage}/>
         </div>
-      <div className=" wide column">
-        <Note onChangeText={onChangeText} currentMessage={currentMessage} done={done}/>
+      <div className="four wide column">
+        <Note onChangeText={onChangeText} currentBot={currentBot} currentMessage={currentMessage} done={done}/>
       </div>
       {/*<Modal />*/}
 	    </div>

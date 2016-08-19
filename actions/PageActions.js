@@ -18,6 +18,50 @@ var getData = function(method, params, callback, errCallback) {
   });
 }
 
+var updateDialogues = function(botId, callback) {
+  var dialogues = [];
+  getData('getDialogues', {botId: botId}, function(data) {
+    var d = [];
+    for(var i in data) {
+      var dialogueId = data[i].dialogueId;
+      var pushed = false;
+      for(var j=0; j<d.length; j++) {
+        if(d[j].id == dialogueId) {
+          d[j].dialogues.push({text: data[i].text, from: data[i].from, ts: data[i].ts, id: data[i].id, note: data[i].note, status: data[i].status});
+          pushed = true;
+        }
+      }
+      if(pushed == false) {
+        d.push({id: dialogueId, dialogues: [{text: data[i].text, from: data[i].from, ts: data[i].ts, id: data[i].id, note: data[i].note, status: data[i].status}]})
+      }
+    }
+
+    /*Sorting*/
+    for(var i in d) {
+      var D = d[i].dialogues;
+      // console.log(D);
+      D.sort(function(a, b) {
+        if(a.ts > b.ts) {
+          return 1;
+        }
+        if(a.ts < b.ts) {
+          return -1;
+        }
+        return 0;
+      });
+    }
+
+
+    callback(d);
+  })
+}
+
+function getDialogById(dialogues, id) {
+  for(var i in dialogues) {
+    if(dialogues[i].id == id)
+      return dialogues[i];
+  }
+}
 
 
 export function setYear(year) {
@@ -95,53 +139,19 @@ export function clickBotCard(botEntry) {
       payload: botEntry
     })
 
-    var dialogues = [];
-    getData('getDialogues', {botId: botEntry.id}, function(data) {
-      console.log(data.length);
-      var d = [];
-      for(var i in data) {
-        var dialogueId = data[i].dialogueId;
-        var pushed = false;
-        for(var j=0; j<d.length; j++) {
-          if(d[j].id == dialogueId) {
-            d[j].dialogues.push({text: data[i].text, from: data[i].from, ts: data[i].ts, id: data[i].id, note: data[i].note, status: data[i].status});
-            pushed = true;
-          }
-        }
-        if(pushed == false) {
-          d.push({id: dialogueId, dialogues: [{text: data[i].text, from: data[i].from, ts: data[i].ts, id: data[i].id, note: data[i].note, status: data[i].status}]})
-        }
-      }
-
-      /*Sorting*/
-      for(var i in d) {
-        var D = d[i].dialogues;
-        console.log(D);
-        D.sort(function(a, b) {
-          if(a.ts > b.ts) {
-            return 1;
-          }
-          if(a.ts < b.ts) {
-            return -1;
-          }
-          return 0;
-        });
-      }
-
-
-      console.log(d);
+    updateDialogues(botEntry.id, function(dialogues) {
       dispatch({
         type: 'DIALOGUES_LOADED',
-        payload: d
+        payload: dialogues
       })
     })
   }
 }
 
-export function chooseDialog(dialog) {
+export function chooseChat(chatId) {
   return{
     type: 'DIALOG_CHOOSED',
-    payload: dialog
+    payload: chatId
   }
 }
 
@@ -153,16 +163,32 @@ export function chooseMessage(message) {
 }
 
 export function onChangeText(text) {
-  return{
-    type: 'TEXT_CHANGED',
-    payload: text
+  return (dispatch) => {
+    
+    dispatch({
+      type: 'TEXT_CHANGED',
+      payload: text
+    })
   }
 }
 
-export function done(id, text, status) {
+export function done(id, currentBotId, text, status) {
   return (dispatch) =>{
+    // dispatch({
+    //   type: 'UPDATING'
+    // });
     getData('updateMessage', {id: id, text: text, status: status}, function(obj) {
-      console.log(obj);
+      console.log(obj)
+      updateDialogues(currentBotId, function(dialogues) {
+        // dispatch({
+        //   type: 'UPDATE_CURRENT_DIALOG',
+        //   payload: getDialogById(dialogues, dialogueId) 
+        // })
+        dispatch({
+          type: 'DIALOGUES_LOADED',
+          payload: dialogues
+        })
+      })
       dispatch({
         type: 'MESSAGE_UPDATED'
       })

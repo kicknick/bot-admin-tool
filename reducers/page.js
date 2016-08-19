@@ -10,8 +10,8 @@ const initialState = {
 	currentHoverBot:{},
 	currentBot: {},
 	currentDialogues: [],
-	currentDialogue: {dialogues:[]},
-	currentMessage: {},
+	currentChatId: '', //chatId
+	currentMessage: {note: ''},
 }
 
 exports.page = (state = initialState, action) => {
@@ -25,7 +25,7 @@ exports.page = (state = initialState, action) => {
 		case 'DIALOGUES_LOADED':
 			return Object.assign({}, state, {currentDialogues: action.payload})
 		case 'DIALOG_CHOOSED':
-			return Object.assign({}, state, {currentDialogue: action.payload})
+			return Object.assign({}, state, {currentChatId: action.payload})
 		case 'MESSAGE_CHOOSED':
 			return Object.assign({}, state, {currentMessage: action.payload})
 		case 'TEXT_CHANGED':

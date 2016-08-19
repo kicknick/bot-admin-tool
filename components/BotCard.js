@@ -21,7 +21,7 @@ export default class BotCard extends Component {
 		}
 		return(
 			<div style={componentStyle.placeholder}>
-				<b onMouseOver={this.mouseOverCard.bind(this)} onClick={this.clickCard.bind(this)}>{this.props.botEntry.name}</b>
+				<b onClick={this.clickCard.bind(this)}>{this.props.botEntry.name}</b>
 			</div>
 		)
 	}

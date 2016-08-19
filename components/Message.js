@@ -10,13 +10,25 @@ export default class Message extends Component {
 	}
 
 	render() {
+		var color = 'grey';
+		if(this.props.message.status == 'Warning') {
+			color = 'orange'
+		}
+		else if(this.props.message.status == 'Critical') {
+			color = 'red'
+		}
+
 		var componentStyle =  {
 		  placeholder: {
 		    border: 'solid'
 		  },
 		  message: {
 				cursor: 'pointer'
-		  }
+		  },
+		 	status: {
+		 		color: color 
+		 	}
+
 		}
 
 		var addition = {};
@@ -26,14 +38,12 @@ export default class Message extends Component {
 			}
 		}
 		else {
-
 		}
-
 		var st1 = Object.assign({}, componentStyle.message, { border: (this.props.message.id == this.props.currentMessage.id) ? 'solid':''});
 		var st = Object.assign({}, st1, addition);
 		return(
 			<div>
-        <p onClick={this.createNote.bind(this)} style={st}>{this.props.message.text} <span style={{color: 'red'}}>{this.props.message.note} {this.props.message.status}</span></p>
+        <p onClick={this.createNote.bind(this)} style={st}>{this.props.message.text} <span style={componentStyle.status}>{this.props.message.note}</span></p>
       </div>
 		)
 	}
